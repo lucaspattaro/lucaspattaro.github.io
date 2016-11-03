@@ -21,6 +21,7 @@ a:hover {
     text-decoration: underline;
 }
 h1 {
+    color: #D28A29;
     font-size: 3em;
     font-family:'Helvetica', 'Arial', 'Sans-Serif';
 }
@@ -44,6 +45,6 @@ ul.posts li {
 }
 
 .blurb {
-background-color: #E97722;
+background-color: #005485;
 
 }
