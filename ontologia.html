@@ -1,0 +1,583 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Diagrama animado em quatro cenas sobre ontologia, knowledge graph e camada ontologica, feito para apresentar ao time comercial.">
+<title>Camada Ontológica para Vendas</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@600;700&family=IBM+Plex+Mono:wght@500&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
+<style>
+:root{
+  --ground:#EEF1F4; --surface:#FFFFFF; --surface-2:#E4E9EE;
+  --ink:#141E28; --muted:#5A6B7A; --line:#C6D0D9; --line-strong:#98A8B6;
+  --accent:#A85E0E; --accent-soft:#F4E4CE; --accent-ink:#7A440A;
+  --crit:#A43022; --crit-soft:#F5DDD9;
+  --focus:#1D5F73;
+  --display:"Archivo","Helvetica Neue",Arial,sans-serif;
+  --body:"IBM Plex Sans","Segoe UI",Helvetica,Arial,sans-serif;
+  --mono:"IBM Plex Mono",ui-monospace,"SF Mono",Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --ground:#0F161C; --surface:#19222B; --surface-2:#232E39;
+    --ink:#E6ECF1; --muted:#95A6B4; --line:#2E3C48; --line-strong:#5A6D7E;
+    --accent:#E0A059; --accent-soft:#3B2B17; --accent-ink:#EFC490;
+    --crit:#E2867A; --crit-soft:#3C201C;
+    --focus:#68BDD2;
+  }
+}
+:root[data-theme="dark"]{
+  --ground:#0F161C; --surface:#19222B; --surface-2:#232E39;
+  --ink:#E6ECF1; --muted:#95A6B4; --line:#2E3C48; --line-strong:#5A6D7E;
+  --accent:#E0A059; --accent-soft:#3B2B17; --accent-ink:#EFC490;
+  --crit:#E2867A; --crit-soft:#3C201C;
+  --focus:#68BDD2;
+}
+
+*{box-sizing:border-box}
+body{
+  margin:0; background:var(--ground); color:var(--ink);
+  font-family:var(--body); font-size:16px; line-height:1.55;
+  -webkit-font-smoothing:antialiased;
+}
+.wrap{max-width:1080px; margin:0 auto; padding-inline:16px; padding-block:34px 56px}
+:focus-visible{outline:2.5px solid var(--focus); outline-offset:2px; border-radius:3px}
+
+.eyebrow{
+  font-family:var(--mono); font-size:11.5px; letter-spacing:.14em;
+  text-transform:uppercase; color:var(--muted); margin:0 0 10px
+}
+h1{
+  font-family:var(--display); font-weight:700; font-size:clamp(28px,5vw,44px);
+  line-height:1.08; letter-spacing:-.02em; margin:0 0 12px; text-wrap:balance
+}
+.lede{max-width:62ch; color:var(--muted); font-size:17px; margin:0}
+.lede strong{color:var(--ink); font-weight:600}
+
+/* ---------- palco ---------- */
+.stage-card{
+  margin-top:28px; background:var(--surface); border:1px solid var(--line);
+  border-radius:4px; overflow:hidden
+}
+.stage-scroll{overflow-x:auto; -webkit-overflow-scrolling:touch}
+.stage-svg{display:block; width:100%; min-width:740px; height:auto}
+.scroll-hint{
+  display:none; font-family:var(--mono); font-size:11px; color:var(--muted);
+  padding:0 14px 12px
+}
+@media (max-width:760px){.scroll-hint{display:block}}
+
+/* ---------- controles ---------- */
+.controls{
+  display:flex; flex-wrap:wrap; align-items:center; gap:10px;
+  border-top:1px solid var(--line); padding:12px 14px; background:var(--surface)
+}
+button{font:inherit; color:inherit; cursor:pointer}
+.btn{
+  background:var(--surface); border:1px solid var(--line-strong); border-radius:3px;
+  padding:7px 13px; font-size:14px; font-weight:500
+}
+.btn:hover:not(:disabled){border-color:var(--ink)}
+.btn:disabled{opacity:.38; cursor:default}
+.btn-play{background:var(--ink); color:var(--surface); border-color:var(--ink); min-width:124px}
+.steps{display:flex; flex-wrap:wrap; gap:6px; margin-left:auto}
+.step{
+  background:none; border:1px solid transparent; border-radius:3px;
+  padding:6px 9px; font-family:var(--mono); font-size:11.5px;
+  letter-spacing:.06em; color:var(--muted)
+}
+.step:hover{color:var(--ink)}
+.step[aria-current="step"]{color:var(--accent-ink); border-color:var(--accent); background:var(--accent-soft)}
+
+/* ---------- legenda da cena ---------- */
+.rail{
+  background:var(--surface); border:1px solid var(--line); border-top:none;
+  border-radius:0 0 4px 4px; padding:22px 24px 24px
+}
+.panel-n{
+  font-family:var(--mono); font-size:11.5px; letter-spacing:.14em;
+  text-transform:uppercase; color:var(--accent-ink); margin:0 0 8px
+}
+.panel h2{
+  font-family:var(--display); font-weight:600; font-size:clamp(20px,3vw,26px);
+  line-height:1.2; letter-spacing:-.015em; margin:0 0 10px; text-wrap:balance
+}
+.panel p{margin:0; max-width:66ch; color:var(--muted)}
+.panel p code{
+  font-family:var(--mono); font-size:.88em; color:var(--ink);
+  background:var(--surface-2); padding:1px 5px; border-radius:2px
+}
+.pitch{
+  margin:16px 0 0; padding:2px 0 2px 14px; border-left:3px solid var(--accent);
+  font-family:var(--display); font-weight:600; font-size:17px; color:var(--ink)
+}
+.pitch span{
+  display:block; font-family:var(--mono); font-weight:500; font-size:10.5px;
+  letter-spacing:.14em; text-transform:uppercase; color:var(--muted); margin-bottom:4px
+}
+
+/* ---------- seções ---------- */
+section{margin-top:52px}
+h3{
+  font-family:var(--display); font-weight:600; font-size:clamp(19px,2.6vw,24px);
+  letter-spacing:-.015em; margin:0 0 6px
+}
+.sec-note{margin:0 0 22px; color:var(--muted); max-width:62ch}
+
+figure{margin:0}
+.compare{display:grid; grid-template-columns:1fr 1fr; gap:16px}
+@media (max-width:720px){.compare{grid-template-columns:1fr}}
+.pane{background:var(--surface); border:1px solid var(--line); border-radius:4px; padding:14px}
+.pane.on{border-color:var(--accent)}
+.pane-h{
+  font-family:var(--mono); font-size:11.5px; letter-spacing:.1em;
+  text-transform:uppercase; color:var(--muted); margin:0 0 10px
+}
+.pane.on .pane-h{color:var(--accent-ink)}
+.pane svg{display:block; width:100%; height:auto}
+figcaption{margin-top:14px; color:var(--muted); font-size:14.5px; max-width:70ch}
+
+.objections{display:grid; gap:2px; background:var(--line); border:1px solid var(--line); border-radius:4px; overflow:hidden}
+.obj{background:var(--surface); padding:18px 20px; display:grid; gap:7px}
+.obj q{
+  font-family:var(--display); font-weight:600; font-size:17px;
+  color:var(--ink); quotes:"“" "”"
+}
+.obj p{margin:0; color:var(--muted); max-width:72ch}
+.obj .tag{
+  font-family:var(--mono); font-size:10.5px; letter-spacing:.14em;
+  text-transform:uppercase; color:var(--accent-ink)
+}
+
+dl.gloss{margin:0; display:grid; gap:0}
+dl.gloss div{
+  display:grid; grid-template-columns:200px 1fr; gap:18px;
+  padding:14px 0; border-top:1px solid var(--line)
+}
+dl.gloss div:last-child{border-bottom:1px solid var(--line)}
+@media (max-width:620px){dl.gloss div{grid-template-columns:1fr; gap:4px}}
+dl.gloss dt{font-family:var(--display); font-weight:600; font-size:16px}
+dl.gloss dd{margin:0; color:var(--muted)}
+dl.gloss dd code{font-family:var(--mono); font-size:.88em; color:var(--ink)}
+
+footer{
+  margin-top:56px; padding-top:18px; border-top:1px solid var(--line);
+  font-family:var(--mono); font-size:11.5px; letter-spacing:.06em; color:var(--muted)
+}
+
+/* ---------- SVG: tokens de desenho ---------- */
+.d-node{fill:var(--surface-2); stroke:var(--line-strong); stroke-width:1.5; transition:stroke .4s ease, fill .4s ease}
+.d-node.dashed{stroke-dasharray:6 5}
+.d-lbl{fill:var(--ink); font-family:var(--body); font-size:17px; font-weight:600; text-anchor:middle}
+.d-sub{fill:var(--muted); font-family:var(--mono); font-size:12.5px; text-anchor:middle}
+.d-inst{fill:var(--ink); font-family:var(--body); font-size:15px; font-weight:500; text-anchor:middle}
+.d-pred{fill:var(--muted); font-family:var(--mono); font-size:12.5px; text-anchor:middle; letter-spacing:.04em}
+.d-band{fill:var(--muted); font-family:var(--mono); font-size:12px; letter-spacing:.14em; text-transform:uppercase}
+.d-note{fill:var(--muted); font-family:var(--mono); font-size:12px; text-anchor:middle}
+.d-q{fill:var(--ink); font-family:var(--body); font-size:17px}
+.d-chip{fill:var(--surface); stroke:var(--line); stroke-width:1.5}
+.d-bg{fill:var(--surface)}
+.d-rec{fill:var(--line)}
+.d-edge{
+  fill:none; stroke:var(--line-strong); stroke-width:2;
+  stroke-dasharray:100; stroke-dashoffset:100; marker-end:url(#ar);
+  transition:stroke-dashoffset .85s ease .1s, stroke .4s ease, stroke-width .4s ease
+}
+.d-dash{fill:none; stroke:var(--line-strong); stroke-width:1.5; stroke-dasharray:5 5}
+
+.layer{opacity:0; transition:opacity .55s ease}
+.stage[data-scene="1"] .l-silos{opacity:1}
+.stage[data-scene="2"] .l-schema,
+.stage[data-scene="3"] .l-schema,
+.stage[data-scene="4"] .l-schema{opacity:1}
+.stage[data-scene="3"] .l-inst,
+.stage[data-scene="4"] .l-inst{opacity:1}
+.stage[data-scene="4"] .l-query{opacity:1}
+.stage[data-scene="2"] .d-edge,
+.stage[data-scene="3"] .d-edge,
+.stage[data-scene="4"] .d-edge{stroke-dashoffset:0}
+.only-2{transition:opacity .4s ease}
+.stage[data-scene="3"] .only-2,
+.stage[data-scene="4"] .only-2{opacity:0}
+.only-3{opacity:0; transition:opacity .4s ease}
+.stage[data-scene="3"] .only-3{opacity:1}
+.stage[data-scene="3"] .sub-class,
+.stage[data-scene="4"] .sub-class{opacity:0}
+.sub-class{transition:opacity .4s ease}
+.stage[data-scene="4"] .d-edge.q{stroke:var(--accent); stroke-width:3.5; marker-end:url(#ar-on)}
+.stage[data-scene="4"] .d-node.q{stroke:var(--accent); stroke-width:2.5}
+
+@media (prefers-reduced-motion: reduce){
+  *,*::before,*::after{transition-duration:.01ms !important; animation-duration:.01ms !important}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<p class="eyebrow">Material de apoio · time comercial</p>
+<h1>O que a gente vende quando vende camada ontológica</h1>
+<p class="lede">Quatro cenas, um mecanismo só: como uma pergunta de negócio deixa de ser <strong>busca por texto parecido</strong> e vira <strong>travessia de um grafo</strong> — com o caminho visível no fim. Use as setas, o play, ou clique numa etapa.</p>
+
+<div class="stage-card">
+  <div class="stage-scroll">
+    <svg class="stage-svg stage" id="stage" data-scene="1" viewBox="0 0 960 600" role="img"
+         aria-label="Diagrama em quatro etapas: dados em silos sem relações; o esquema da ontologia com as classes Cliente, Contrato, Renovação, Incidente e Produto e as relações assina, vence_em, cobre, abre e afeta; o grafo com registros reais nesses nós; e a consulta atravessando o grafo em três saltos até a resposta.">
+      <defs>
+        <marker id="ar" viewBox="0 0 12 12" refX="10" refY="6" markerWidth="12" markerHeight="12"
+                markerUnits="userSpaceOnUse" orient="auto-start-reverse">
+          <path d="M0 0 L12 6 L0 12 Z" fill="var(--line-strong)"></path>
+        </marker>
+        <marker id="ar-on" viewBox="0 0 12 12" refX="10" refY="6" markerWidth="14" markerHeight="14"
+                markerUnits="userSpaceOnUse" orient="auto-start-reverse">
+          <path d="M0 0 L12 6 L0 12 Z" fill="var(--accent)"></path>
+        </marker>
+      </defs>
+
+      <!-- ============ CENA 1: silos ============ -->
+      <g class="layer l-silos">
+        <rect class="d-node" x="45" y="95" width="190" height="110" rx="4"></rect>
+        <text class="d-lbl" x="140" y="129">CRM</text>
+        <rect class="d-rec" x="72" y="146" width="136" height="7" rx="2"></rect>
+        <rect class="d-rec" x="72" y="162" width="104" height="7" rx="2"></rect>
+        <rect class="d-rec" x="72" y="178" width="124" height="7" rx="2"></rect>
+
+        <rect class="d-node" x="285" y="95" width="190" height="110" rx="4"></rect>
+        <text class="d-lbl" x="380" y="129">ERP</text>
+        <rect class="d-rec" x="312" y="146" width="124" height="7" rx="2"></rect>
+        <rect class="d-rec" x="312" y="162" width="136" height="7" rx="2"></rect>
+        <rect class="d-rec" x="312" y="178" width="96" height="7" rx="2"></rect>
+
+        <rect class="d-node" x="525" y="95" width="190" height="110" rx="4"></rect>
+        <text class="d-lbl" x="620" y="129">Chamados</text>
+        <rect class="d-rec" x="552" y="146" width="108" height="7" rx="2"></rect>
+        <rect class="d-rec" x="552" y="162" width="136" height="7" rx="2"></rect>
+        <rect class="d-rec" x="552" y="178" width="118" height="7" rx="2"></rect>
+
+        <rect class="d-node" x="765" y="95" width="190" height="110" rx="4"></rect>
+        <text class="d-lbl" x="860" y="129">Contratos (PDF)</text>
+        <rect class="d-rec" x="792" y="146" width="136" height="7" rx="2"></rect>
+        <rect class="d-rec" x="792" y="162" width="112" height="7" rx="2"></rect>
+        <rect class="d-rec" x="792" y="178" width="130" height="7" rx="2"></rect>
+
+        <circle class="d-chip" cx="260" cy="150" r="14" style="stroke-dasharray:4 4"></circle>
+        <text class="d-sub" x="260" y="156" style="font-size:15px">?</text>
+        <circle class="d-chip" cx="500" cy="150" r="14" style="stroke-dasharray:4 4"></circle>
+        <text class="d-sub" x="500" y="156" style="font-size:15px">?</text>
+        <circle class="d-chip" cx="740" cy="150" r="14" style="stroke-dasharray:4 4"></circle>
+        <text class="d-sub" x="740" y="156" style="font-size:15px">?</text>
+
+        <text class="d-note" x="480" y="232">nenhuma relação declarada entre os sistemas</text>
+
+        <text class="d-band" x="130" y="266">Pergunta do time comercial</text>
+        <rect class="d-chip" x="130" y="280" width="700" height="60" rx="4"></rect>
+        <text class="d-q" x="480" y="317" text-anchor="middle">Quais clientes com incidente crítico aberto renovam nos próximos 90 dias?</text>
+
+        <path class="d-dash" d="M 480 344 L 480 414" marker-end="url(#ar)"></path>
+        <text class="d-band" x="494" y="386">IA sobre texto solto</text>
+
+        <rect class="d-chip" x="130" y="424" width="700" height="92" rx="4"></rect>
+        <text class="d-q" x="480" y="462" text-anchor="middle">«Provavelmente a Ativa Log — vi um chamado grave por lá.»</text>
+        <text class="d-note" x="480" y="494" style="fill:var(--crit); letter-spacing:.12em">SEM CAMINHO · SEM PROCEDÊNCIA · NÃO AUDITÁVEL</text>
+      </g>
+
+      <!-- ============ CENAS 2-4: esquema ============ -->
+      <g class="layer l-schema">
+        <text class="d-band only-2" x="30" y="52">Esquema · 5 classes · 5 relações permitidas · nenhum registro</text>
+        <text class="d-band only-3" x="30" y="52">Grafo · registros reais encaixados nas classes</text>
+
+        <path class="d-edge q" d="M 225 280 L 347 196" pathLength="100"></path>
+        <path class="d-edge q" d="M 505 168 L 655 153" pathLength="100"></path>
+        <path class="d-edge q" d="M 225 320 L 347 414" pathLength="100"></path>
+        <path class="d-edge" d="M 505 420 L 656 359" pathLength="100"></path>
+        <path class="d-edge" d="M 455 207 L 691 304" pathLength="100"></path>
+
+        <rect class="d-bg" x="258" y="228" width="56" height="20" rx="2"></rect>
+        <text class="d-pred" x="286" y="242">assina</text>
+        <rect class="d-bg" x="544" y="150" width="72" height="20" rx="2"></rect>
+        <text class="d-pred" x="580" y="164">vence_em</text>
+        <rect class="d-bg" x="264" y="357" width="44" height="20" rx="2"></rect>
+        <text class="d-pred" x="286" y="371">abre</text>
+        <rect class="d-bg" x="556" y="380" width="48" height="20" rx="2"></rect>
+        <text class="d-pred" x="580" y="394">afeta</text>
+        <rect class="d-bg" x="548" y="246" width="50" height="20" rx="2"></rect>
+        <text class="d-pred" x="573" y="260">cobre</text>
+
+        <rect class="d-node q" x="75" y="268" width="150" height="64" rx="4"></rect>
+        <text class="d-lbl" x="150" y="293">Cliente</text>
+        <text class="d-sub sub-class" x="150" y="315">nome · segmento</text>
+
+        <rect class="d-node q" x="355" y="143" width="150" height="64" rx="4"></rect>
+        <text class="d-lbl" x="430" y="168">Contrato</text>
+        <text class="d-sub sub-class" x="430" y="190">início · fim</text>
+
+        <rect class="d-node q" x="665" y="118" width="150" height="64" rx="4"></rect>
+        <text class="d-lbl" x="740" y="143">Renovação</text>
+        <text class="d-sub sub-class" x="740" y="165">data · janela</text>
+
+        <rect class="d-node q" x="355" y="403" width="150" height="64" rx="4"></rect>
+        <text class="d-lbl" x="430" y="428">Incidente</text>
+        <text class="d-sub sub-class" x="430" y="450">sev. · status</text>
+
+        <rect class="d-node" x="665" y="308" width="150" height="64" rx="4"></rect>
+        <text class="d-lbl" x="740" y="333">Produto</text>
+        <text class="d-sub sub-class" x="740" y="355">sku · família</text>
+      </g>
+
+      <!-- ============ CENAS 3-4: instâncias ============ -->
+      <g class="layer l-inst">
+        <text class="d-inst" x="150" y="316">Ativa Log</text>
+        <text class="d-inst" x="430" y="191">CT-2291</text>
+        <text class="d-inst" x="740" y="166">vence 12/jan</text>
+        <text class="d-inst" x="430" y="451">INC-8842</text>
+        <text class="d-inst" x="740" y="356">Roteirizador</text>
+        <text class="d-note" x="140" y="352" style="font-size:11px">ATIVA LOG LTDA · Ativa Logística</text>
+        <text class="d-note" x="140" y="368" style="font-size:11px">→ 1 entidade</text>
+      </g>
+
+      <!-- ============ CENA 4: consulta ============ -->
+      <g class="layer l-query">
+        <path d="M 30 48 L 62 48" style="stroke:var(--accent); stroke-width:3.5; fill:none"></path>
+        <text class="d-band" x="70" y="52">Caminho da consulta</text>
+
+        <rect x="355" y="472" width="150" height="26" rx="3" style="fill:var(--crit-soft); stroke:var(--crit); stroke-width:1.5"></rect>
+        <text class="d-note" x="430" y="490" style="fill:var(--crit)">crítico · aberto</text>
+
+        <rect x="665" y="84" width="150" height="26" rx="3" style="fill:var(--accent-soft); stroke:var(--accent); stroke-width:1.5"></rect>
+        <text class="d-note" x="740" y="102" style="fill:var(--accent-ink)">vence em 47 dias</text>
+
+        <text class="d-band" x="30" y="504">Pergunta</text>
+        <rect class="d-chip" x="30" y="512" width="510" height="72" rx="4"></rect>
+        <text class="d-q" x="48" y="541" style="font-size:15px">Quais clientes com incidente crítico aberto</text>
+        <text class="d-q" x="48" y="563" style="font-size:15px">renovam nos próximos 90 dias?</text>
+
+        <text class="d-band" x="580" y="504">Resposta</text>
+        <rect x="580" y="512" width="350" height="72" rx="4" style="fill:var(--accent-soft); stroke:var(--accent); stroke-width:1.5"></rect>
+        <text x="598" y="545" style="fill:var(--ink); font-family:var(--display); font-size:20px; font-weight:700">Ativa Log</text>
+        <text x="598" y="567" style="fill:var(--accent-ink); font-family:var(--mono); font-size:11.5px">3 saltos · caminho auditável</text>
+      </g>
+    </svg>
+  </div>
+  <p class="scroll-hint">↔ arraste o diagrama para o lado</p>
+
+  <div class="controls">
+    <button class="btn" id="prev" type="button">‹ Anterior</button>
+    <button class="btn btn-play" id="play" type="button" aria-pressed="false">▶ Reproduzir</button>
+    <button class="btn" id="next" type="button">Próxima ›</button>
+    <div class="steps" role="group" aria-label="Etapas do diagrama">
+      <button class="step" type="button" data-go="1" aria-current="step">1 · Silos</button>
+      <button class="step" type="button" data-go="2" aria-current="false">2 · Esquema</button>
+      <button class="step" type="button" data-go="3" aria-current="false">3 · Grafo</button>
+      <button class="step" type="button" data-go="4" aria-current="false">4 · Consulta</button>
+    </div>
+  </div>
+</div>
+
+<div class="rail" aria-live="polite">
+  <div class="panel">
+    <p class="panel-n">Cena 1 de 4</p>
+    <h2>Os dados existem. O caminho entre eles, não.</h2>
+    <p>Cada sistema guarda um pedaço da verdade, e nenhum deles sabe o que o outro chama de cliente. Uma IA ligada nesses silos acha o trecho mais parecido com a pergunta — não os fatos ligados que respondem ela. Por isso a resposta sai plausível e sem como conferir.</p>
+    <p class="pitch"><span>Fala de vendas</span>Não é falta de dado. É falta de ligação entre os dados.</p>
+  </div>
+  <div class="panel" hidden>
+    <p class="panel-n">Cena 2 de 4</p>
+    <h2>A ontologia é o contrato de significado.</h2>
+    <p>Antes de qualquer registro, define-se o vocabulário do negócio: que entidades existem — Cliente, Contrato, Renovação, Incidente, Produto — e que relações valem entre elas: <code>assina</code>, <code>vence_em</code>, <code>cobre</code>, <code>abre</code>, <code>afeta</code>. Nada foi carregado ainda; o que está na tela é só o esquema, com as propriedades de cada classe.</p>
+    <p class="pitch"><span>Fala de vendas</span>A ontologia não é o dado. É a regra do que pode ligar com o quê.</p>
+  </div>
+  <div class="panel" hidden>
+    <p class="panel-n">Cena 3 de 4</p>
+    <h2>O grafo: seus registros encaixados no esquema.</h2>
+    <p>Agora os sistemas despejam o conteúdo dentro das classes e cada registro vira um nó tipado. O mesmo cliente escrito de três formas em três bases — ATIVA LOG LTDA, Ativa Logística, código 4471 — passa por resolução de entidade e vira um nó só. As relações do esquema viram arestas reais entre os registros.</p>
+    <p class="pitch"><span>Fala de vendas</span>Um cliente. Não três cadastros parecidos.</p>
+  </div>
+  <div class="panel" hidden>
+    <p class="panel-n">Cena 4 de 4</p>
+    <h2>A pergunta vira um caminho.</h2>
+    <p>A consulta atravessa o grafo em saltos nomeados: Cliente <code>abre</code> Incidente crítico e aberto; o mesmo Cliente <code>assina</code> Contrato que <code>vence_em</code> 47 dias. Um cliente satisfaz as duas pontas. A resposta chega junto com o caminho que a produziu — é isso que torna a resposta auditável, e não a confiança no modelo.</p>
+    <p class="pitch"><span>Fala de vendas</span>A IA não acha. Ela percorre — e mostra por onde passou.</p>
+  </div>
+</div>
+
+<section>
+  <h3>Onde a camada entra na arquitetura</h3>
+  <p class="sec-note">A objeção mais comum em reunião é “mas a IA já responde isso”. Responde. A diferença não está na resposta — está no que vem junto com ela.</p>
+  <figure>
+    <div class="compare">
+      <div class="pane">
+        <p class="pane-h">Sem camada ontológica</p>
+        <svg viewBox="0 0 440 340" role="img" aria-label="A pergunta vai ao modelo de IA, que busca por texto parecido diretamente em quatro fontes desconectadas: CRM, ERP, chamados e PDFs. A resposta traz o trecho mais parecido.">
+          <defs>
+            <marker id="arB" viewBox="0 0 12 12" refX="10" refY="6" markerWidth="10" markerHeight="10" markerUnits="userSpaceOnUse" orient="auto-start-reverse">
+              <path d="M0 0 L12 6 L0 12 Z" fill="var(--line-strong)"></path>
+            </marker>
+          </defs>
+          <rect class="d-chip" x="110" y="14" width="220" height="38" rx="3"></rect>
+          <text x="220" y="38" style="fill:var(--ink); font-family:var(--body); font-size:13px; font-weight:600; text-anchor:middle">Pergunta do time</text>
+          <path d="M 220 56 L 220 84" style="fill:none; stroke:var(--line-strong); stroke-width:1.8" marker-end="url(#arB)"></path>
+          <rect class="d-node" x="140" y="90" width="160" height="44" rx="3"></rect>
+          <text x="220" y="118" style="fill:var(--ink); font-family:var(--body); font-size:13px; font-weight:600; text-anchor:middle">Modelo de IA</text>
+          <path class="d-dash" d="M 220 138 L 58 264" marker-end="url(#arB)"></path>
+          <path class="d-dash" d="M 220 138 L 164 264" marker-end="url(#arB)"></path>
+          <path class="d-dash" d="M 220 138 L 270 264" marker-end="url(#arB)"></path>
+          <path class="d-dash" d="M 220 138 L 376 264" marker-end="url(#arB)"></path>
+          <rect class="d-bg" x="166" y="188" width="108" height="20" rx="2"></rect>
+          <text class="d-note" x="220" y="202" style="font-size:10.5px">busca por texto</text>
+          <rect class="d-chip" x="8" y="268" width="94" height="40" rx="3"></rect>
+          <text class="d-note" x="55" y="292" style="font-size:10px">CRM</text>
+          <rect class="d-chip" x="116" y="268" width="94" height="40" rx="3"></rect>
+          <text class="d-note" x="163" y="292" style="font-size:10px">ERP</text>
+          <rect class="d-chip" x="224" y="268" width="94" height="40" rx="3"></rect>
+          <text class="d-note" x="271" y="292" style="font-size:10px">CHAMADOS</text>
+          <rect class="d-chip" x="332" y="268" width="94" height="40" rx="3"></rect>
+          <text class="d-note" x="379" y="292" style="font-size:10px">PDFs</text>
+          <text class="d-note" x="220" y="330" style="fill:var(--crit); font-size:11px">a resposta traz o trecho mais parecido</text>
+        </svg>
+      </div>
+
+      <div class="pane on">
+        <p class="pane-h">Com camada ontológica</p>
+        <svg viewBox="0 0 440 340" role="img" aria-label="A pergunta vai ao modelo de IA, que consulta a camada ontológica. A camada carrega as classes Cliente, Contrato, Renovação, Incidente e Produto, e é ela que alcança as mesmas quatro fontes. A resposta traz o caminho de três saltos nomeados.">
+          <defs>
+            <marker id="arC" viewBox="0 0 12 12" refX="10" refY="6" markerWidth="10" markerHeight="10" markerUnits="userSpaceOnUse" orient="auto-start-reverse">
+              <path d="M0 0 L12 6 L0 12 Z" fill="var(--line-strong)"></path>
+            </marker>
+            <marker id="arCon" viewBox="0 0 12 12" refX="10" refY="6" markerWidth="11" markerHeight="11" markerUnits="userSpaceOnUse" orient="auto-start-reverse">
+              <path d="M0 0 L12 6 L0 12 Z" fill="var(--accent)"></path>
+            </marker>
+          </defs>
+          <rect class="d-chip" x="110" y="14" width="220" height="38" rx="3"></rect>
+          <text x="220" y="38" style="fill:var(--ink); font-family:var(--body); font-size:13px; font-weight:600; text-anchor:middle">Pergunta do time</text>
+          <path d="M 220 56 L 220 84" style="fill:none; stroke:var(--line-strong); stroke-width:1.8" marker-end="url(#arC)"></path>
+          <rect class="d-node" x="140" y="90" width="160" height="44" rx="3"></rect>
+          <text x="220" y="118" style="fill:var(--ink); font-family:var(--body); font-size:13px; font-weight:600; text-anchor:middle">Modelo de IA</text>
+          <path d="M 220 138 L 220 168" style="fill:none; stroke:var(--accent); stroke-width:2.5" marker-end="url(#arCon)"></path>
+          <text class="d-band" x="232" y="158" style="font-size:10px">vira travessia</text>
+          <rect x="8" y="174" width="424" height="64" rx="3" style="fill:var(--accent-soft); stroke:var(--accent); stroke-width:1.5"></rect>
+          <text class="d-band" x="20" y="193" style="fill:var(--accent-ink); font-size:10.5px">Camada ontológica</text>
+          <rect x="18" y="200" width="76" height="26" rx="2" style="fill:var(--surface); stroke:var(--accent); stroke-width:1"></rect>
+          <text class="d-note" x="56" y="217" style="font-size:9px">CLIENTE</text>
+          <rect x="100" y="200" width="76" height="26" rx="2" style="fill:var(--surface); stroke:var(--accent); stroke-width:1"></rect>
+          <text class="d-note" x="138" y="217" style="font-size:9px">CONTRATO</text>
+          <rect x="182" y="200" width="76" height="26" rx="2" style="fill:var(--surface); stroke:var(--accent); stroke-width:1"></rect>
+          <text class="d-note" x="220" y="217" style="font-size:9px">RENOV.</text>
+          <rect x="264" y="200" width="76" height="26" rx="2" style="fill:var(--surface); stroke:var(--accent); stroke-width:1"></rect>
+          <text class="d-note" x="302" y="217" style="font-size:9px">INCID.</text>
+          <rect x="346" y="200" width="76" height="26" rx="2" style="fill:var(--surface); stroke:var(--accent); stroke-width:1"></rect>
+          <text class="d-note" x="384" y="217" style="font-size:9px">PRODUTO</text>
+          <path d="M 55 242 L 55 264" style="fill:none; stroke:var(--line-strong); stroke-width:1.8" marker-end="url(#arC)"></path>
+          <path d="M 163 242 L 163 264" style="fill:none; stroke:var(--line-strong); stroke-width:1.8" marker-end="url(#arC)"></path>
+          <path d="M 271 242 L 271 264" style="fill:none; stroke:var(--line-strong); stroke-width:1.8" marker-end="url(#arC)"></path>
+          <path d="M 379 242 L 379 264" style="fill:none; stroke:var(--line-strong); stroke-width:1.8" marker-end="url(#arC)"></path>
+          <text class="d-note" x="220" y="259" style="font-size:10px">mapeia</text>
+          <rect class="d-chip" x="8" y="268" width="94" height="40" rx="3"></rect>
+          <text class="d-note" x="55" y="292" style="font-size:10px">CRM</text>
+          <rect class="d-chip" x="116" y="268" width="94" height="40" rx="3"></rect>
+          <text class="d-note" x="163" y="292" style="font-size:10px">ERP</text>
+          <rect class="d-chip" x="224" y="268" width="94" height="40" rx="3"></rect>
+          <text class="d-note" x="271" y="292" style="font-size:10px">CHAMADOS</text>
+          <rect class="d-chip" x="332" y="268" width="94" height="40" rx="3"></rect>
+          <text class="d-note" x="379" y="292" style="font-size:10px">PDFs</text>
+          <text class="d-note" x="220" y="330" style="fill:var(--accent-ink); font-size:11px">a resposta traz o caminho: 3 saltos nomeados</text>
+        </svg>
+      </div>
+    </div>
+    <figcaption>As fontes são as mesmas dos dois lados — nada é substituído. A diferença é a camada no meio: ela guarda o esquema e o grafo, traduz a pergunta em travessia e devolve, junto com a resposta, a lista de saltos que a sustentam.</figcaption>
+  </figure>
+</section>
+
+<section>
+  <h3>As três objeções que você vai ouvir</h3>
+  <p class="sec-note">Respostas curtas, para usar na reunião sem abrir o diagrama.</p>
+  <div class="objections">
+    <div class="obj">
+      <p class="tag">Objeção 1</p>
+      <q>Já temos data warehouse, isso não é a mesma coisa?</q>
+      <p>O warehouse guarda as tabelas; a ontologia guarda o significado. Todo JOIN depende de alguém saber de antemão quais colunas ligam e escrever a query. No grafo, essa ligação é dado — nomeada e armazenada — e o modelo consegue segui-la sozinho, inclusive em perguntas que ninguém previu.</p>
+    </div>
+    <div class="obj">
+      <p class="tag">Objeção 2</p>
+      <q>A IA já responde isso hoje.</q>
+      <p>Responde. E você não tem como saber quando errou. Sem caminho não existe auditoria: a resposta é boa ou ruim por confiança. Com caminho, cada resposta vem acompanhada dos fatos que a sustentam, e qualquer pessoa da área consegue conferir salto por salto.</p>
+    </div>
+    <div class="obj">
+      <p class="tag">Objeção 3</p>
+      <q>Isso é um projeto de dois anos.</q>
+      <p>Só se você tentar modelar a empresa inteira. Comece por um domínio: as cinco a oito entidades que respondem as perguntas que o time já faz toda semana — como a deste diagrama. O grafo cresce por adesão, quando outra área quer entrar nele, não por big bang.</p>
+    </div>
+  </div>
+</section>
+
+<section>
+  <h3>Os termos, em uma linha cada</h3>
+  <p class="sec-note">Para não trocar as palavras na frente do cliente — a confusão mais comum é chamar o grafo de ontologia.</p>
+  <dl class="gloss">
+    <div><dt>Ontologia</dt><dd>O esquema: que entidades existem e que relações são permitidas entre elas. Vale mesmo sem nenhum dado carregado.</dd></div>
+    <div><dt>Knowledge graph</dt><dd>O esquema preenchido: os registros reais como nós, as relações como arestas entre eles.</dd></div>
+    <div><dt>Entidade (nó)</dt><dd>Uma coisa do mundo com identidade própria: um cliente, um contrato, um incidente.</dd></div>
+    <div><dt>Relação (predicado)</dt><dd>A aresta com nome — <code>assina</code>, <code>cobre</code>, <code>vence_em</code>. É o nome que torna o caminho legível para um humano.</dd></div>
+    <div><dt>Resolução de entidade</dt><dd>Decidir que “ATIVA LOG LTDA”, “Ativa Logística” e o código 4471 são o mesmo nó.</dd></div>
+    <div><dt>Camada ontológica</dt><dd>Onde isso tudo fica na arquitetura: entre o modelo e as fontes, traduzindo pergunta em travessia e devolvendo resposta com procedência.</dd></div>
+  </dl>
+</section>
+
+<footer>Domínio de exemplo (logística). Troque as cinco entidades pelas do cliente antes de apresentar — o diagrama continua o mesmo.</footer>
+
+</div>
+
+<script>
+(function(){
+  var stage=document.getElementById('stage');
+  var panels=[].slice.call(document.querySelectorAll('.panel'));
+  var steps=[].slice.call(document.querySelectorAll('.step'));
+  var playBtn=document.getElementById('play');
+  var prevBtn=document.getElementById('prev');
+  var nextBtn=document.getElementById('next');
+  var LAST=4, scene=1, timer=null;
+  var reduce=window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  function go(n){
+    scene=Math.max(1,Math.min(LAST,n));
+    stage.setAttribute('data-scene',String(scene));
+    panels.forEach(function(p,i){p.hidden=(i+1!==scene);});
+    steps.forEach(function(s,i){s.setAttribute('aria-current',(i+1===scene)?'step':'false');});
+    prevBtn.disabled=(scene===1);
+    nextBtn.disabled=(scene===LAST);
+  }
+  function stop(){
+    if(timer){clearInterval(timer);timer=null;}
+    playBtn.textContent='▶ Reproduzir';
+    playBtn.setAttribute('aria-pressed','false');
+  }
+  function play(){
+    if(timer)return;
+    if(scene===LAST)go(1);
+    playBtn.textContent='❚❚ Pausar';
+    playBtn.setAttribute('aria-pressed','true');
+    timer=setInterval(function(){
+      if(scene>=LAST){stop();return;}
+      go(scene+1);
+    },6500);
+  }
+
+  playBtn.addEventListener('click',function(){timer?stop():play();});
+  prevBtn.addEventListener('click',function(){stop();go(scene-1);});
+  nextBtn.addEventListener('click',function(){stop();go(scene+1);});
+  steps.forEach(function(s){
+    s.addEventListener('click',function(){stop();go(parseInt(s.getAttribute('data-go'),10));});
+  });
+  document.addEventListener('keydown',function(e){
+    if(e.key==='ArrowRight'){stop();go(scene+1);}
+    else if(e.key==='ArrowLeft'){stop();go(scene-1);}
+    else if(e.key===' '&&e.target.tagName!=='BUTTON'){e.preventDefault();timer?stop():play();}
+  });
+
+  go(1);
+  if(!reduce){setTimeout(function(){if(scene===1&&!timer)play();},2600);}
+})();
+</script>
+</body>
+</html>
